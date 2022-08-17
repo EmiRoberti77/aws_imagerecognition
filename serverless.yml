@@ -1,0 +1,40 @@
+
+service: emi-lambda-recko
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+  region: eu-west-2
+
+  iamRoleStatements:
+  - Effect: Allow
+    Action: 
+      - s3:ListBucket
+      - s3:GetObject
+      - s3:DeleteObject
+    Resource: arn:aws:s3:::nx-frame-test/*
+  - Effect: Allow
+    Action: 
+      - rekognition:DetectLabel
+    Resource: "*"
+
+functions:
+  detectLabels:
+    handler: .build/src/handler.detectLabels
+    events:
+      - httpApi: 
+          path: /detectlabel
+          method: post
+
+  findLabel:
+    handler: .build/src/handler.getLabel
+    events: 
+      - httpApi: 
+          path: /getlabel/{name}
+          method: get
+
+
+
+

@@ -1,0 +1,22 @@
+{
+  "name": "emi-lambda-recko",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/uuid": "^8.3.4",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1192.0",
+    "uuid": "^8.3.2",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.102"
+  }
+}
