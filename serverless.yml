@@ -28,6 +28,13 @@ functions:
           path: /detectlabel
           method: post
 
+  detectFaces:
+    handler: .build/src/handler.detectFaces
+    events:
+      - httpApi: 
+          path: /detectFace
+          method: post
+
   findLabel:
     handler: .build/src/handler.getLabel
     events: 

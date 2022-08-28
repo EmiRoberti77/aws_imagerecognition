@@ -42,4 +42,22 @@ export class ValAI {
             return err;
         })
     }
+
+    async detectFaces():Promise<AWS.Rekognition.FaceDetail[]> {
+        const param = {
+            Image: {
+                S3Object: {
+                    Bucket: this.bucketName,
+                    Name: this.imageName
+                }
+            }
+        }
+
+        const aiClient = new AWS.Rekognition();
+        return await aiClient.detectFaces(param).promise().then((data)=>{
+            return data.FaceDetails;
+        }).catch((err:any)=>{
+            return err;
+        })
+    }
 }

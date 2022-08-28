@@ -35,6 +35,29 @@ const validateParams = (reqBody:any):any => {
   return "no errors";
 }
 
+export const detectFaces = async( event:APIGatewayProxyEvent ) => {
+  
+  if(!event.body)
+    return reportError("missing body for this Lambda function");
+
+  const reqBody = JSON.parse(event.body as string);
+  const validation = validateParams(reqBody);
+
+  const aiApi = new ValAI(reqBody.bucketName, reqBody.imageName)
+  aiApi.openConnection();
+
+  return await aiApi.detectFaces().then((data) => {
+    return {
+      statusCode: 200,
+      body: JSON.stringify( 
+        {
+          message: reqBody,
+          apiVersion: 1.0,
+          statusCode: 200,
+          input: data }, null, 2 ) };
+  })
+}
+
 export const detectLabels = async (event:APIGatewayProxyEvent) => {
   
   if(!event.body)
