@@ -9,7 +9,7 @@ dist/
 
 .build/src/db.js
 .build/src/db.js.map
-src/db.ts
+.serverless/emi-lambda-recko.zip
 
 # Compiled Java class files
 *.class
