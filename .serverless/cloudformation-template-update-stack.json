@@ -83,6 +83,12 @@
         "LogGroupName": "/aws/lambda/emi-lambda-recko-dev-detectFaces"
       }
     },
+    "DetectTextLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/emi-lambda-recko-dev-detectText"
+      }
+    },
     "FindLabelLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -158,9 +164,28 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "rekognition:DetectLabel"
+                    "rekognition:DetectText",
+                    "rekognition:DetectLabel",
+                    "rekognition:DetectFace"
                   ],
                   "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:PutItem",
+                    "dynamodb:GetItem",
+                    "dynamodb:DeleteItem",
+                    "dynamodb:Scan"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "ProductsTable",
+                        "Arn"
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -189,7 +214,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/emi-lambda-recko/dev/1661696743573-2022-08-28T14:25:43.573Z/emi-lambda-recko.zip"
+          "S3Key": "serverless/emi-lambda-recko/dev/1662033284704-2022-09-01T11:54:44.704Z/emi-lambda-recko.zip"
         },
         "Handler": ".build/src/handler.detectLabels",
         "Runtime": "nodejs16.x",
@@ -214,7 +239,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/emi-lambda-recko/dev/1661696743573-2022-08-28T14:25:43.573Z/emi-lambda-recko.zip"
+          "S3Key": "serverless/emi-lambda-recko/dev/1662033284704-2022-09-01T11:54:44.704Z/emi-lambda-recko.zip"
         },
         "Handler": ".build/src/handler.detectFaces",
         "Runtime": "nodejs16.x",
@@ -232,6 +257,31 @@
         "DetectFacesLogGroup"
       ]
     },
+    "DetectTextLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/emi-lambda-recko/dev/1662033284704-2022-09-01T11:54:44.704Z/emi-lambda-recko.zip"
+        },
+        "Handler": ".build/src/handler.detectText",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "emi-lambda-recko-dev-detectText",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "DetectTextLogGroup"
+      ]
+    },
     "FindLabelLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -239,7 +289,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/emi-lambda-recko/dev/1661696743573-2022-08-28T14:25:43.573Z/emi-lambda-recko.zip"
+          "S3Key": "serverless/emi-lambda-recko/dev/1662033284704-2022-09-01T11:54:44.704Z/emi-lambda-recko.zip"
         },
         "Handler": ".build/src/handler.getLabel",
         "Runtime": "nodejs16.x",
@@ -257,34 +307,44 @@
         "FindLabelLogGroup"
       ]
     },
-    "DetectLabelsLambdaVersionvDLgrCorxwiJQraqEN5N1ljqbwBW0cvb39NCjmLTU": {
+    "DetectLabelsLambdaVersionDhsEJfiSS7DPRRIUMAYT75xm7cDwHqAXqA6f2TL9Q": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DetectLabelsLambdaFunction"
         },
-        "CodeSha256": "7CvrYPZ8DxJO1MW1dEj4J5hSED8aWRWtnlWLJvGmKVA="
+        "CodeSha256": "D7NtZa5UH3dyTu/lBHwft5hLyuxJ+eFl71q1YaqUnYw="
       }
     },
-    "DetectFacesLambdaVersion7o4y6aT34CR9XFYQXjvhFHxKPPR2VTjJTA3RdKu9Q": {
+    "DetectFacesLambdaVersionmma4ONAkmaJaX4VQUBjCOvuNFHMD9a4dXJAGAxY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DetectFacesLambdaFunction"
         },
-        "CodeSha256": "7CvrYPZ8DxJO1MW1dEj4J5hSED8aWRWtnlWLJvGmKVA="
+        "CodeSha256": "D7NtZa5UH3dyTu/lBHwft5hLyuxJ+eFl71q1YaqUnYw="
       }
     },
-    "FindLabelLambdaVersionGADAyohJfoucmKDJb4NRSvOOKMIkkqCJSwhAJ8Umvg": {
+    "DetectTextLambdaVersionUt27SOekp9dAlrThQQb96Yu2SURaqGfk7zeXI4l7Q24": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "DetectTextLambdaFunction"
+        },
+        "CodeSha256": "D7NtZa5UH3dyTu/lBHwft5hLyuxJ+eFl71q1YaqUnYw="
+      }
+    },
+    "FindLabelLambdaVersionX0AP1lgfVhXy9vXvtjp0whuDkUXpWVrtRNSbbosESZ0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FindLabelLambdaFunction"
         },
-        "CodeSha256": "7CvrYPZ8DxJO1MW1dEj4J5hSED8aWRWtnlWLJvGmKVA="
+        "CodeSha256": "D7NtZa5UH3dyTu/lBHwft5hLyuxJ+eFl71q1YaqUnYw="
       }
     },
     "HttpApi": {
@@ -457,6 +517,81 @@
       },
       "DependsOn": "HttpApiIntegrationDetectFaces"
     },
+    "DetectTextLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DetectTextLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationDetectText": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "DetectTextLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 6500
+      }
+    },
+    "HttpApiRoutePostDetecttext": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /detectText",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationDetectText"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationDetectText"
+    },
     "FindLabelLambdaPermissionHttpApi": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
@@ -531,6 +666,28 @@
         }
       },
       "DependsOn": "HttpApiIntegrationFindLabel"
+    },
+    "ProductsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "ProductsTable",
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "productID",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "productID",
+            "KeyType": "HASH"
+          }
+        ]
+      }
     }
   },
   "Outputs": {
@@ -545,7 +702,7 @@
     "DetectLabelsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DetectLabelsLambdaVersionvDLgrCorxwiJQraqEN5N1ljqbwBW0cvb39NCjmLTU"
+        "Ref": "DetectLabelsLambdaVersionDhsEJfiSS7DPRRIUMAYT75xm7cDwHqAXqA6f2TL9Q"
       },
       "Export": {
         "Name": "sls-emi-lambda-recko-dev-DetectLabelsLambdaFunctionQualifiedArn"
@@ -554,16 +711,25 @@
     "DetectFacesLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DetectFacesLambdaVersion7o4y6aT34CR9XFYQXjvhFHxKPPR2VTjJTA3RdKu9Q"
+        "Ref": "DetectFacesLambdaVersionmma4ONAkmaJaX4VQUBjCOvuNFHMD9a4dXJAGAxY"
       },
       "Export": {
         "Name": "sls-emi-lambda-recko-dev-DetectFacesLambdaFunctionQualifiedArn"
       }
     },
+    "DetectTextLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "DetectTextLambdaVersionUt27SOekp9dAlrThQQb96Yu2SURaqGfk7zeXI4l7Q24"
+      },
+      "Export": {
+        "Name": "sls-emi-lambda-recko-dev-DetectTextLambdaFunctionQualifiedArn"
+      }
+    },
     "FindLabelLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FindLabelLambdaVersionGADAyohJfoucmKDJb4NRSvOOKMIkkqCJSwhAJ8Umvg"
+        "Ref": "FindLabelLambdaVersionX0AP1lgfVhXy9vXvtjp0whuDkUXpWVrtRNSbbosESZ0"
       },
       "Export": {
         "Name": "sls-emi-lambda-recko-dev-FindLabelLambdaFunctionQualifiedArn"

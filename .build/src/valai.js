@@ -41,6 +41,22 @@ class ValAI {
             return err;
         });
     }
+    async detectText() {
+        const param = {
+            Image: {
+                S3Object: {
+                    Bucket: this.bucketName,
+                    Name: this.imageName
+                }
+            }
+        };
+        const aiClient = new aws_sdk_1.default.Rekognition();
+        return await aiClient.detectText(param).promise().then((data) => {
+            return data.TextDetections;
+        }).catch((err) => {
+            return err;
+        });
+    }
     async detectFaces() {
         const param = {
             Image: {

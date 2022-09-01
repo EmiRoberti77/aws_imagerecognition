@@ -43,6 +43,24 @@ export class ValAI {
         })
     }
 
+    async detectText():Promise<AWS.Rekognition.TextDetection[]> {
+        const param = {
+            Image: {
+                S3Object: {
+                    Bucket: this.bucketName,
+                    Name: this.imageName
+                }
+            }
+        }
+
+        const aiClient = new AWS.Rekognition();
+        return await aiClient.detectText(param).promise().then((data)=>{
+            return data.TextDetections
+        }).catch((err:any)=>{
+            return err;
+        })
+    }
+
     async detectFaces():Promise<AWS.Rekognition.FaceDetail[]> {
         const param = {
             Image: {

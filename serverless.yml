@@ -8,17 +8,32 @@ provider:
 
   region: eu-west-2
 
-  iamRoleStatements:
-  - Effect: Allow
-    Action: 
-      - s3:ListBucket
-      - s3:GetObject
-      - s3:DeleteObject
-    Resource: arn:aws:s3:::nx-frame-test/*
-  - Effect: Allow
-    Action: 
-      - rekognition:DetectLabel
-    Resource: "*"
+  iam:
+    role:
+      statements:
+      - Effect: Allow
+        Action: 
+          - s3:ListBucket
+          - s3:GetObject
+          - s3:DeleteObject
+          # - s3:GetBucketPolicy # added ?
+          # - s3:PutBucketPolicy # added ?
+        #Resource: arn:aws:s3:::nx-frame-test1/* #emi aws
+        Resource: arn:aws:s3:::nx-frame-test/*
+      - Effect: Allow
+        Action: 
+          - rekognition:DetectText
+          - rekognition:DetectLabel
+          - rekognition:DetectFace
+        Resource: "*"
+      - Effect: Allow
+        Action: 
+          - "dynamodb:PutItem"
+          - "dynamodb:GetItem"
+          - "dynamodb:DeleteItem"
+          - "dynamodb:Scan"
+        Resource:
+          - { "Fn::GetAtt": ["ProductsTable", "Arn"] }
 
 functions:
   detectLabels:
@@ -35,6 +50,13 @@ functions:
           path: /detectFace
           method: post
 
+  detectText:
+    handler: .build/src/handler.detectText
+    events:
+      - httpApi: 
+          path: /detectText
+          method: post
+
   findLabel:
     handler: .build/src/handler.getLabel
     events: 
@@ -42,6 +64,21 @@ functions:
           path: /getlabel/{name}
           method: get
 
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ProductsTable
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        AttributeDefinitions:
+          - AttributeName: productID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: productID
+            KeyType: HASH
 
 
 

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLabel = exports.detectLabels = exports.detectFaces = void 0;
+exports.getLabel = exports.detectLabels = exports.detectText = exports.detectFaces = void 0;
 const valai_1 = require("./valai");
 const reportError = (err) => {
     return {
@@ -46,6 +46,32 @@ const detectFaces = async (event) => {
     });
 };
 exports.detectFaces = detectFaces;
+const detectText = async (event) => {
+    if (!event.body)
+        return reportError("missing body for this Lambda function");
+    const reqBody = JSON.parse(event.body);
+    const validation = validateParams(reqBody);
+    if ("no errors" !== validation)
+        return validation;
+    //if(reqBody.saveToDb as boolean) { 
+    //  const db = new ValDB();
+    //  db.put("ProductsTable", reqBody);
+    //}
+    const aiApi = new valai_1.ValAI(reqBody.bucketName, reqBody.imageName);
+    aiApi.openConnection();
+    return await aiApi.detectText().then((data) => {
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: reqBody,
+                apiVersion: 1.0,
+                statusCode: 200,
+                input: data
+            }, null, 2)
+        };
+    });
+};
+exports.detectText = detectText;
 const detectLabels = async (event) => {
     if (!event.body)
         return reportError("missing body for this Lambda function");

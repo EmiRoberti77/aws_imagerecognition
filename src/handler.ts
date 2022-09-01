@@ -1,6 +1,7 @@
 import AWS from "aws-sdk"
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { ValAI } from "./valai";
+import { ValDB } from "./db";
 
 const reportError = (err:string) => {
   return {
@@ -58,8 +59,39 @@ export const detectFaces = async( event:APIGatewayProxyEvent ) => {
   })
 }
 
-export const detectLabels = async (event:APIGatewayProxyEvent) => {
+export const detectText =async (event:APIGatewayProxyEvent) => {
   
+  if(!event.body)
+    return reportError("missing body for this Lambda function");
+
+    const reqBody = JSON.parse(event.body as string);
+    const validation = validateParams(reqBody);
+  
+    if("no errors" !== validation)
+      return validation;      
+
+    //if(reqBody.saveToDb as boolean) { 
+    //  const db = new ValDB();
+    //  db.put("ProductsTable", reqBody);
+    //}
+
+    const aiApi = new ValAI(reqBody.bucketName, reqBody.imageName)
+    aiApi.openConnection();
+
+    return await aiApi.detectText().then((data)=>{
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: reqBody,
+            apiVersion: 1.0,
+            statusCode: 200,
+            input: data }, null, 2 ) };
+    })
+}
+
+export const detectLabels = async (event:APIGatewayProxyEvent) => {
+    
   if(!event.body)
     return reportError("missing body for this Lambda function");
 
