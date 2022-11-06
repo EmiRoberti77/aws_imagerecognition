@@ -13,12 +13,12 @@ class ValAI {
     openConnection() {
         aws_sdk_1.default.config.getCredentials((err) => {
             if (err) {
-                console.log(err);
+                //log(err);
                 return false;
             }
             else {
                 aws_sdk_1.default.config.region = "eu-west-2";
-                console.log(`updates region ${aws_sdk_1.default.config.region}`);
+                //console.log(`updates region ${AWS.config.region}`);
                 return true;
             }
         });
@@ -69,6 +69,22 @@ class ValAI {
         const aiClient = new aws_sdk_1.default.Rekognition();
         return await aiClient.detectFaces(param).promise().then((data) => {
             return data.FaceDetails;
+        }).catch((err) => {
+            return err;
+        });
+    }
+    async detectPPE() {
+        const param = {
+            Image: {
+                S3Object: {
+                    Bucket: this.bucketName,
+                    Name: this.imageName
+                }
+            }
+        };
+        const aiClient = new aws_sdk_1.default.Rekognition();
+        return await aiClient.detectProtectiveEquipment(param).promise().then((data) => {
+            return data;
         }).catch((err) => {
             return err;
         });

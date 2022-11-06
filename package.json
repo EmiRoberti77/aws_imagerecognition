@@ -17,6 +17,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.102"
+    "@types/aws-lambda": "^8.10.102",
+    "@types/node": "^18.11.9"
   }
 }

@@ -1,4 +1,5 @@
 import AWS from "aws-sdk";
+import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
 
 export class ValAI {
     private bucketName: string;
@@ -12,11 +13,11 @@ export class ValAI {
     openConnection(){         
         AWS.config.getCredentials((err)=>{
             if(err){
-                console.log(err);
+                //log(err);
                 return false;
             } else {
                 AWS.config.region = "eu-west-2";
-                console.log(`updates region ${AWS.config.region}`);
+                //console.log(`updates region ${AWS.config.region}`);
                 return true;
             }
         })
@@ -74,6 +75,24 @@ export class ValAI {
         const aiClient = new AWS.Rekognition();
         return await aiClient.detectFaces(param).promise().then((data)=>{
             return data.FaceDetails;
+        }).catch((err:any)=>{
+            return err;
+        })
+    }
+
+    async detectPPE():Promise<any> {
+        const param = {
+            Image: {
+                S3Object: {
+                    Bucket: this.bucketName,
+                    Name: this.imageName
+                }
+            }
+        }
+    
+        const aiClient = new AWS.Rekognition();
+        return await aiClient.detectProtectiveEquipment(param).promise().then((data)=>{
+            return data;
         }).catch((err:any)=>{
             return err;
         })

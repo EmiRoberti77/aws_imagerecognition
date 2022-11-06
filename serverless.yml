@@ -4,7 +4,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs14.x
 
   region: eu-west-2
 
@@ -18,14 +18,16 @@ provider:
           - s3:DeleteObject
           # - s3:GetBucketPolicy # added ?
           # - s3:PutBucketPolicy # added ?
-        #Resource: arn:aws:s3:::nx-frame-test1/* #emi aws
+        #Resource: arn:aws:s3:::nx-frame-test1/* #emi aws 
         Resource: arn:aws:s3:::nx-frame-test/*
       - Effect: Allow
         Action: 
           - rekognition:DetectText
           - rekognition:DetectLabel
           - rekognition:DetectFace
-        Resource: "*"
+          - rekognition:DetectProtectiveEquipment
+        Resource:
+          - '*'
       - Effect: Allow
         Action: 
           - "dynamodb:PutItem"
@@ -56,6 +58,13 @@ functions:
       - httpApi: 
           path: /detectText
           method: post
+
+  detectPPE:
+    handler: .build/src/handler.detectPPE
+    events:
+    - httpApi: 
+        path: /detectPPE
+        method: post
 
   findLabel:
     handler: .build/src/handler.getLabel
